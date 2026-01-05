@@ -687,11 +687,16 @@ export class EksStack {
     const hypersChart = cluster.addHelmChart("HyperswitchServices", {
       chart: "hyperswitch-stack",
       repository: "https://juspay.github.io/hyperswitch-helm/",
-      version: "0.2.12",
+      version: "0.2.19",
       namespace: "hyperswitch",
       release: "hypers-v1",
       wait: false,
+      timeout: cdk.Duration.minutes(15),  // Timeout for initial image pulls
       values: {
+        global: {
+          imageRegistry: "",  // Empty to prevent prefix on ECR URLs
+          imagePullPolicy: "IfNotPresent",
+        },
         clusterName: cluster.clusterName,
         loadBalancer: {
           targetSecurityGroup: lbSecurityGroup.securityGroupId,
@@ -712,15 +717,19 @@ export class EksStack {
           services: {
             router: {
               image: `${privateEcrRepository}/juspaydotin/hyperswitch-router:v1.116.0-standalone`,
+              imagePullPolicy: "IfNotPresent",
             },
             producer: {
-              image: `${privateEcrRepository}/juspaydotin/hyperswitch-producer:v1.116.0-standalone`
+              image: `${privateEcrRepository}/juspaydotin/hyperswitch-producer:v1.116.0-standalone`,
+              imagePullPolicy: "IfNotPresent",
             },
             consumer: {
-              image: `${privateEcrRepository}/juspaydotin/hyperswitch-consumer:v1.116.0-standalone`
+              image: `${privateEcrRepository}/juspaydotin/hyperswitch-consumer:v1.116.0-standalone`,
+              imagePullPolicy: "IfNotPresent",
             },
             controlCenter: {
-              image: `${privateEcrRepository}/juspaydotin/hyperswitch-control-center:v1.37.3`
+              image: `${privateEcrRepository}/juspaydotin/hyperswitch-control-center:v1.37.3`,
+              imagePullPolicy: "IfNotPresent",
             },
             sdk: {
               host: "https://${this.sdkDistribution.distributionDomainName}",
@@ -1152,7 +1161,8 @@ export class EksStack {
       values: {
         grafana: {
           global: {
-            imageRegisrty: `${privateEcrRepository}`,
+            imageRegistry: "",  // Empty to prevent prefix on ECR URLs
+            imagePullPolicy: "IfNotPresent",
           },
           image: {
             repository: `${privateEcrRepository}/grafana/grafana`
@@ -1226,7 +1236,8 @@ export class EksStack {
         loki: {
           enabled: true,
           global: {
-            imageRegisrty: `${privateEcrRepository}`,
+            imageRegistry: "",  // Empty to prevent prefix on ECR URLs
+            imagePullPolicy: "IfNotPresent",
           },
           serviceAccount: {
             annotations: {
@@ -1303,11 +1314,11 @@ export class EksStack {
         promtail: {
           enabled: true,
           global: {
-            imageRegisrty: `${privateEcrRepository}`,
+            imageRegistry: "",  // Empty to prevent prefix on ECR URLs
+            imagePullPolicy: "IfNotPresent",
           },
           image: {
-            registry: `${privateEcrRepository}`,
-            repository: "grafana/promtail",
+            repository: `${privateEcrRepository}/grafana/promtail`,
           },
           config: {
             snippets: {
@@ -1338,6 +1349,7 @@ export class EksStack {
         image: {
           repository: `${privateEcrRepository}/bitnami/metrics-server`,
           tag: "0.7.2",
+          pullPolicy: "IfNotPresent",
         },
       }
     });
@@ -1579,7 +1591,7 @@ class DockerImagesToEcr {
       runtime: Runtime.PYTHON_3_12,
       handler: "index.lambda_handler",
       code: Code.fromInline(lambdaStartBuildCode),
-      timeout: cdk.Duration.minutes(15),
+      timeout: cdk.Duration.minutes(15),  // Maximum Lambda timeout
       role: triggerCodeBuildRole,
       environment: {
         PROJECT_NAME: this.codebuildProject.projectName,
