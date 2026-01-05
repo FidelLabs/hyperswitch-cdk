@@ -691,6 +691,7 @@ export class EksStack {
       namespace: "hyperswitch",
       release: "hypers-v1",
       wait: false,
+      timeout: cdk.Duration.minutes(20),  // Increase timeout for initial image pulls
       values: {
         clusterName: cluster.clusterName,
         loadBalancer: {
@@ -712,15 +713,19 @@ export class EksStack {
           services: {
             router: {
               image: `${privateEcrRepository}/juspaydotin/hyperswitch-router:v1.116.0-standalone`,
+              imagePullPolicy: "IfNotPresent",
             },
             producer: {
-              image: `${privateEcrRepository}/juspaydotin/hyperswitch-producer:v1.116.0-standalone`
+              image: `${privateEcrRepository}/juspaydotin/hyperswitch-producer:v1.116.0-standalone`,
+              imagePullPolicy: "IfNotPresent",
             },
             consumer: {
-              image: `${privateEcrRepository}/juspaydotin/hyperswitch-consumer:v1.116.0-standalone`
+              image: `${privateEcrRepository}/juspaydotin/hyperswitch-consumer:v1.116.0-standalone`,
+              imagePullPolicy: "IfNotPresent",
             },
             controlCenter: {
-              image: `${privateEcrRepository}/juspaydotin/hyperswitch-control-center:v1.37.3`
+              image: `${privateEcrRepository}/juspaydotin/hyperswitch-control-center:v1.37.3`,
+              imagePullPolicy: "IfNotPresent",
             },
             sdk: {
               host: "https://${this.sdkDistribution.distributionDomainName}",
