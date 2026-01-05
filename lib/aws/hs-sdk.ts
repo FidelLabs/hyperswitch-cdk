@@ -87,7 +87,7 @@ export class HyperswitchSDKStack extends Construct {
         },
       },
       environment: {
-        buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2023_5_0,
+        buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2023_5,
       },
     });
 
