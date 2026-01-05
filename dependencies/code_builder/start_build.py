@@ -59,7 +59,7 @@ def lambda_handler(event, context):
 
             # Wait for the build to complete
             print("Waiting for CodeBuild to complete (this may take 10-15 minutes for image mirroring)...")
-            max_wait_time = 1200  # 20 minutes max
+            max_wait_time = 900  # 15 minutes max
             wait_interval = 30  # Check every 30 seconds
             elapsed_time = 0
 

@@ -687,11 +687,11 @@ export class EksStack {
     const hypersChart = cluster.addHelmChart("HyperswitchServices", {
       chart: "hyperswitch-stack",
       repository: "https://juspay.github.io/hyperswitch-helm/",
-      version: "0.2.12",
+      version: "0.2.19",
       namespace: "hyperswitch",
       release: "hypers-v1",
       wait: false,
-      timeout: cdk.Duration.minutes(20),  // Increase timeout for initial image pulls
+      timeout: cdk.Duration.minutes(15),  // Timeout for initial image pulls
       values: {
         global: {
           imageRegistry: "",  // Empty to prevent prefix on ECR URLs
