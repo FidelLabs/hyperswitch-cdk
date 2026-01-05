@@ -39,7 +39,7 @@ export class EksStack {
   hyperswitchHost: string;
   lokiChart: eks.HelmChart;
   sdkBucket: s3.Bucket;
-  sdkDistribution: cloudfront.CloudFrontWebDistribution;
+  sdkDistribution: cloudfront.Distribution;
   constructor(
     scope: Construct,
     config: Config,
@@ -310,6 +310,9 @@ export class EksStack {
 
     const ckhzookeepernodegroup = cluster.addNodegroupCapacity("HSCkhZookeeperNodegroup", {
       nodegroupName: "ckh-zookeeper-compute",
+      instanceTypes: [
+        new ec2.InstanceType("t3.medium"),
+      ],
       minSize: 3,
       maxSize: 8,
       desiredSize: 3,
@@ -323,6 +326,9 @@ export class EksStack {
 
     const ckhcomputenodegroup = cluster.addNodegroupCapacity("HSCkhcomputeNodegroup", {
       nodegroupName: "clickhouse-compute-OD",
+      instanceTypes: [
+        new ec2.InstanceType("r5.large"),
+      ],
       minSize: 2,
       maxSize: 3,
       desiredSize: 2,
@@ -352,6 +358,9 @@ export class EksStack {
 
     const kafkacomputenodegroup = cluster.addNodegroupCapacity("HSKafkacomputeNodegroup", {
       nodegroupName: "kafka-compute-OD",
+      instanceTypes: [
+        new ec2.InstanceType("m5.large"),
+      ],
       minSize: 3,
       maxSize: 6,
       desiredSize: 3,
@@ -445,6 +454,9 @@ export class EksStack {
 
     const zookeepernodegroup = cluster.addNodegroupCapacity("HSZkcomputeNodegroup", {
       nodegroupName: "zookeeper-compute",
+      instanceTypes: [
+        new ec2.InstanceType("t3.medium"),
+      ],
       minSize: 3,
       maxSize: 10,
       desiredSize: 3,
@@ -485,7 +497,7 @@ export class EksStack {
 
     const kms_encrypt_function = new Function(scope, "hyperswitch-kms-encrypt", {
       functionName: "HyperswitchKmsEncryptionLambda",
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_12,
       handler: "index.lambda_handler",
       code: Code.fromInline(encryption_code),
       timeout: cdk.Duration.minutes(15),
@@ -651,18 +663,15 @@ export class EksStack {
 
     const oai = new cloudfront.OriginAccessIdentity(scope, 'SdkOAI');
     sdkBucket.grantRead(oai);
- 
-    this.sdkDistribution = new cloudfront.CloudFrontWebDistribution(scope, 'sdkDistribution', {
-      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.ALLOW_ALL,
-      originConfigs: [
-        {
-          s3OriginSource: {
-            s3BucketSource: sdkBucket,
-            originAccessIdentity: oai,
-          },
-          behaviors: [{ isDefaultBehavior: true }, { pathPattern: '/*', allowedMethods: cloudfront.CloudFrontAllowedMethods.GET_HEAD }]
-        }
-      ]
+
+    this.sdkDistribution = new cloudfront.Distribution(scope, 'sdkDistribution', {
+      defaultBehavior: {
+        origin: new origins.S3Origin(sdkBucket, {
+          originAccessIdentity: oai,
+        }),
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.ALLOW_ALL,
+        allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
+      },
     });
     
     this.sdkDistribution.node.addDependency(sdkBucket);
@@ -1500,7 +1509,7 @@ class DockerImagesToEcr {
         },
       },
       environment: {
-        buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_5,
+        buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2023_5_0,
       },
       role: ecrRole,
       buildSpec: codebuild.BuildSpec.fromAsset("./dependencies/code_builder/buildspec.yml"),
@@ -1568,7 +1577,7 @@ class DockerImagesToEcr {
     );
 
     const triggerCodeBuild = new Function(scope, "ECRImageTransferLambda", {
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_12,
       handler: "index.lambda_handler",
       code: Code.fromInline(lambdaStartBuildCode),
       timeout: cdk.Duration.minutes(15),
