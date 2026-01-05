@@ -1579,7 +1579,7 @@ class DockerImagesToEcr {
       runtime: Runtime.PYTHON_3_12,
       handler: "index.lambda_handler",
       code: Code.fromInline(lambdaStartBuildCode),
-      timeout: cdk.Duration.minutes(15),
+      timeout: cdk.Duration.minutes(15),  // Maximum Lambda timeout
       role: triggerCodeBuildRole,
       environment: {
         PROJECT_NAME: this.codebuildProject.projectName,
