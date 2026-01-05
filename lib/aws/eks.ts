@@ -279,11 +279,10 @@ export class EksStack {
       nodegroupName: "hs-nodegroup",
       instanceTypes: [
         new ec2.InstanceType("t3.medium"),
-        new ec2.InstanceType("t3.medium"),
       ],
       minSize: 1,
       maxSize: 3,
-      desiredSize: 2,
+      desiredSize: 1,
       labels: {
         "node-type": "generic-compute",
       },
@@ -311,10 +310,10 @@ export class EksStack {
     const ckhzookeepernodegroup = cluster.addNodegroupCapacity("HSCkhZookeeperNodegroup", {
       nodegroupName: "ckh-zookeeper-compute",
       instanceTypes: [
-        new ec2.InstanceType("t3.medium"),
+        new ec2.InstanceType("t3.small"),
       ],
       minSize: 3,
-      maxSize: 8,
+      maxSize: 3,
       desiredSize: 3,
       labels: {
         "node-type": "ckh-zookeeper-compute",
@@ -329,9 +328,9 @@ export class EksStack {
       instanceTypes: [
         new ec2.InstanceType("r5.large"),
       ],
-      minSize: 2,
+      minSize: 1,
       maxSize: 3,
-      desiredSize: 2,
+      desiredSize: 1,
       labels: {
         "node-type": "clickhouse-compute",
       },
@@ -343,10 +342,10 @@ export class EksStack {
     const controlcenternodegroup = cluster.addNodegroupCapacity("HSControlcentreNodegroup", {
       nodegroupName: "control-center",
       instanceTypes: [
-        new ec2.InstanceType("t3.medium"),
+        new ec2.InstanceType("t3.small"),
       ],
       minSize: 1,
-      maxSize: 5,
+      maxSize: 2,
       desiredSize: 1,
       labels: {
         "node-type": "control-center",
@@ -359,10 +358,10 @@ export class EksStack {
     const kafkacomputenodegroup = cluster.addNodegroupCapacity("HSKafkacomputeNodegroup", {
       nodegroupName: "kafka-compute-OD",
       instanceTypes: [
-        new ec2.InstanceType("m5.large"),
+        new ec2.InstanceType("t3.medium"),
       ],
       minSize: 3,
-      maxSize: 6,
+      maxSize: 5,
       desiredSize: 3,
       labels: {
         "node-type": "kafka-compute",
@@ -375,11 +374,11 @@ export class EksStack {
     const memoryoptimizenodegroup = cluster.addNodegroupCapacity("HSMemoryoptimizeNodegroup", {
       nodegroupName: "memory-optimized-od",
       instanceTypes: [
-        new ec2.InstanceType("t3.medium"),
+        new ec2.InstanceType("t3.small"),
       ],
       minSize: 1,
-      maxSize: 5,
-      desiredSize: 2,
+      maxSize: 3,
+      desiredSize: 1,
       labels: {
         "node-type": "memory-optimized",
       },
@@ -389,11 +388,11 @@ export class EksStack {
     const monitoringnodegroup = cluster.addNodegroupCapacity("HSMonitoringNodegroup", {
       nodegroupName: "monitoring-od",
       instanceTypes: [
-        new ec2.InstanceType("t3.medium"),
+        new ec2.InstanceType("t3.small"),
       ],
-      minSize: 3,
-      maxSize: 63,
-      desiredSize: 6,
+      minSize: 2,
+      maxSize: 6,
+      desiredSize: 2,
       labels: {
         "node-type": "monitoring",
       },
@@ -405,7 +404,7 @@ export class EksStack {
     const pomeriumnodegroup = cluster.addNodegroupCapacity("HSPomeriumNodegroup", {
       nodegroupName: "pomerium",
       instanceTypes: [
-        new ec2.InstanceType("t3.medium"),
+        new ec2.InstanceType("t3.small"),
       ],
       minSize: 2,
       maxSize: 2,
@@ -423,10 +422,10 @@ export class EksStack {
     const systemnodegroup = cluster.addNodegroupCapacity("HSSystemNodegroup", {
       nodegroupName: "system-nodes-od",
       instanceTypes: [
-        new ec2.InstanceType("t3.medium"),
+        new ec2.InstanceType("t3.small"),
       ],
       minSize: 1,
-      maxSize: 5,
+      maxSize: 2,
       desiredSize: 1,
       labels: {
         "node-type": "system-nodes",
@@ -439,11 +438,11 @@ export class EksStack {
     const utilsnodegroup = cluster.addNodegroupCapacity("HSUtilsNodegroup", {
       nodegroupName: "utils-compute-od",
       instanceTypes: [
-        new ec2.InstanceType("t3.medium"),
+        new ec2.InstanceType("t3.small"),
       ],
-      minSize: 5,
-      maxSize: 8,
-      desiredSize: 5,
+      minSize: 2,
+      maxSize: 5,
+      desiredSize: 2,
       labels: {
         "node-type": "elasticsearch",
       },
@@ -455,10 +454,10 @@ export class EksStack {
     const zookeepernodegroup = cluster.addNodegroupCapacity("HSZkcomputeNodegroup", {
       nodegroupName: "zookeeper-compute",
       instanceTypes: [
-        new ec2.InstanceType("t3.medium"),
+        new ec2.InstanceType("t3.small"),
       ],
       minSize: 3,
-      maxSize: 10,
+      maxSize: 3,
       desiredSize: 3,
       labels: {
         "node-type": "zookeeper-compute",
