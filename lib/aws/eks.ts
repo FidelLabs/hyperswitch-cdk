@@ -693,6 +693,10 @@ export class EksStack {
       wait: false,
       timeout: cdk.Duration.minutes(20),  // Increase timeout for initial image pulls
       values: {
+        global: {
+          imageRegistry: "",  // Empty to prevent prefix on ECR URLs
+          imagePullPolicy: "IfNotPresent",
+        },
         clusterName: cluster.clusterName,
         loadBalancer: {
           targetSecurityGroup: lbSecurityGroup.securityGroupId,
@@ -1157,7 +1161,8 @@ export class EksStack {
       values: {
         grafana: {
           global: {
-            imageRegisrty: `${privateEcrRepository}`,
+            imageRegistry: "",  // Empty to prevent prefix on ECR URLs
+            imagePullPolicy: "IfNotPresent",
           },
           image: {
             repository: `${privateEcrRepository}/grafana/grafana`
@@ -1231,7 +1236,8 @@ export class EksStack {
         loki: {
           enabled: true,
           global: {
-            imageRegisrty: `${privateEcrRepository}`,
+            imageRegistry: "",  // Empty to prevent prefix on ECR URLs
+            imagePullPolicy: "IfNotPresent",
           },
           serviceAccount: {
             annotations: {
@@ -1308,11 +1314,11 @@ export class EksStack {
         promtail: {
           enabled: true,
           global: {
-            imageRegisrty: `${privateEcrRepository}`,
+            imageRegistry: "",  // Empty to prevent prefix on ECR URLs
+            imagePullPolicy: "IfNotPresent",
           },
           image: {
-            registry: `${privateEcrRepository}`,
-            repository: "grafana/promtail",
+            repository: `${privateEcrRepository}/grafana/promtail`,
           },
           config: {
             snippets: {
@@ -1343,6 +1349,7 @@ export class EksStack {
         image: {
           repository: `${privateEcrRepository}/bitnami/metrics-server`,
           tag: "0.7.2",
+          pullPolicy: "IfNotPresent",
         },
       }
     });
